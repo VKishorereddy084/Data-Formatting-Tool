@@ -3,7 +3,6 @@ APScheduler - 3.11.0
 beautifulsoup4 - 4.13.4
 chromadb - 1.0.4
 Crawl4AI[all] - 0.6.2
-crawl4ai-setup
 docling - 2.31.0
 faiss-cpu - 1.10.0
 Flask - 3.1.0
