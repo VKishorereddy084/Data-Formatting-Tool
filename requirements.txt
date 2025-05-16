@@ -1,4 +1,5 @@
 aiofiles - 24.1.0
+APScheduler - 3.11.0
 beautifulsoup4 - 4.13.4
 chromadb - 1.0.4
 Crawl4AI[all] - 0.6.2
