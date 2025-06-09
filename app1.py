@@ -5,6 +5,12 @@ import time
 import logging
 import asyncio
 import atexit
+import ssl
+import certifi
+
+# Force Python's default HTTPS context to use certifi's CA bundle
+ssl._create_default_https_context = ssl.create_default_context(cafile=certifi.where())
+
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
