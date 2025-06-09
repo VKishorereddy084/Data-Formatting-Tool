@@ -1,5 +1,5 @@
 aiofiles - 24.1.0
-APScheduler - 3.11.0
+APScheduler - 3.11.01
 beautifulsoup4 - 4.13.4
 chromadb - 1.0.4
 Crawl4AI[all] - 0.6.2
@@ -16,6 +16,7 @@ nest-asyncio - 1.6.0
 ninja - 1.11.1.4
 numpy - 2.2.4
 openai - 1.72.0
+python - 3.13.1
 pandas - 2.2.3
 pip - 25.1.1
 PyMuPDF - 1.25.5
