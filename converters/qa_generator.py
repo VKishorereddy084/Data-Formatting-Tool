@@ -132,7 +132,7 @@ def process_chapter(
     text: str,
     vector_store: Chroma
 ) -> Tuple[str, List[Tuple[str, str, str]]]:
-    print(f"📚 Processing {title}...")
+    print(f" Processing {title}...")
     md_section = f"## {title}\n\n"
     rows = []
 
@@ -167,7 +167,7 @@ def generate_qa_from_markdown(md_path: str, output_dir: str, api_key: str, model
     if not chapters:
         chapters = {"Full Document": md_text}
 
-    output_md = "# 📘 Q&A Pairs\n\n"
+    output_md = "#  Q&A Pairs\n\n"
     for title, content in chapters.items():
         questions = generate_questions(client, content, model_name)
         if not questions:
