@@ -94,7 +94,7 @@ async def extract_urls_from_sitemap(sitemap_url):
         ns = {'ns': 'http://www.sitemaps.org/schemas/sitemap/0.9'}
         return [url.text for url in root.findall(".//ns:loc", ns)]
     except ET.ParseError:
-        print(f"⚠️ Sitemap at {sitemap_url} is invalid. Skipping...")
+        print(f" Sitemap at {sitemap_url} is invalid. Skipping...")
         return []
 
 
@@ -126,7 +126,7 @@ def extract_internal_links(base_url):
         return filtered_links
 
     except requests.exceptions.RequestException as e:
-        print(f"⚠️ Error fetching {base_url}: {e}")
+        print(f" Error fetching {base_url}: {e}")
         return []
 
 
@@ -135,7 +135,7 @@ async def discover_urls(base_url):
     sitemap_links = await extract_urls_from_sitemap(sitemap_url)
 
     if not sitemap_links:
-        print("⚠️ No sitemap found! Extracting internal links instead (ordered)...")
+        print(" No sitemap found! Extracting internal links instead (ordered)...")
         sitemap_links = extract_internal_links(base_url)
 
     print(f"🔍 Total Pages Found: {len(sitemap_links)}")
@@ -160,11 +160,11 @@ async def process_url(crawler, url, config, dispatcher, output_dir):
 
         with open(raw_file, "w", encoding="utf-8") as f:
             f.write(result.markdown.raw_markdown)
-            print(f"✅ Raw markdown saved to: {raw_file}")
+            print(f" Raw markdown saved to: {raw_file}")
 
         with open(filtered_file, "w", encoding="utf-8") as f:
             f.write(result.markdown.fit_markdown)
-            print(f"✅ Filtered markdown saved to: {filtered_file}")
+            print(f" Filtered markdown saved to: {filtered_file}")
 
         return {"url": url, "raw": raw_file, "filtered": filtered_file}
     else:
