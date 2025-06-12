@@ -31,7 +31,7 @@ _log = logging.getLogger(__name__)
 def convert_pdf_to_markdown(input_pdf_path: Path, output_dir: Path) -> Path:
     """ Convert PDF to Markdown using Docling """
     try:
-        _log.info(f"🔁 Starting PDF conversion: {input_pdf_path}")
+        _log.info(f" Starting PDF conversion: {input_pdf_path}")
 
         pipeline_options = PdfPipelineOptions()
         pipeline_options.do_ocr = True
@@ -53,7 +53,7 @@ def convert_pdf_to_markdown(input_pdf_path: Path, output_dir: Path) -> Path:
         start_time = time.time()
         conv_result = doc_converter.convert(input_pdf_path)
         if not conv_result or not conv_result.document:
-            _log.error("❌ Conversion returned empty result or failed silently.")
+            _log.error(" Conversion returned empty result or failed silently.")
             raise ValueError("Empty conversion result for PDF.")
         logging.info(f"Document converted in {time.time() - start_time:.2f} seconds.")
 
@@ -64,7 +64,7 @@ def convert_pdf_to_markdown(input_pdf_path: Path, output_dir: Path) -> Path:
         return markdown_path
     
     except Exception as e:
-        _log.exception("❌ PDF conversion failed")
+        _log.exception(" PDF conversion failed")
         raise
 
 
@@ -114,7 +114,7 @@ CHAPTER_START_PATTERNS = {
 
 def clean_markdown(md_path: Path) -> Path:
     try:
-        _log.info(f"🧼 Cleaning markdown file: {md_path}")
+        _log.info(f" Cleaning markdown file: {md_path}")
         text = md_path.read_text(encoding="utf-8")
 
     # 1) detect language
@@ -130,7 +130,7 @@ def clean_markdown(md_path: Path) -> Path:
             text = text[start_re.start():]
 
         else:
-            _log.warning("⚠️ No chapter anchor found in markdown.")
+            _log.warning(" No chapter anchor found in markdown.")
 
     # 3) load NLI classifier once
         _log.info(f"🤖 Loading zero-shot model for lang: {lang}")
@@ -139,7 +139,7 @@ def clean_markdown(md_path: Path) -> Path:
         else:
             classifier = pipeline("zero-shot-classification", model="svalabs/gbert-large-zeroshot-nli")
 
-        _log.info("✅ Classifier loaded successfully.")
+        _log.info(" Classifier loaded successfully.")
 
 
     # flatten unwanted-section labels
@@ -173,10 +173,10 @@ def clean_markdown(md_path: Path) -> Path:
     # write out cleaned file
         out_path = md_path.parent / f"cleaned_{md_path.stem}.md"
         out_path.write_text(text.strip(), encoding="utf-8")
-        logging.info(f"✅ Cleaned Markdown at {out_path}")
+        logging.info(f" Cleaned Markdown at {out_path}")
         return out_path
 
     except Exception as e:
-        _log.exception("❌ Markdown cleaning failed")
+        _log.exception(" Markdown cleaning failed")
         raise
 
