@@ -202,5 +202,5 @@ def generate_summary(md_path: str, output_dir: str, api_key: str, model_name: st
     with open(out_path, "w", encoding="utf-8") as f:
         f.write(output_md)
 
-    print(f"✅ Summary saved to {out_path}")
+    print(f" Summary saved to {out_path}")
     return str(out_path)
