@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Data Formatting Tool for Chatbots</title>
+
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f4f6f8;
+    }
+
+    h1, h3 {
+      font-weight: 600;
+    }
+
+    .split-section {
+      border-radius: 12px;
+      padding: 30px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.05);
+      background-color: #fff;
+      transition: transform 0.2s;
+    }
+
+    .split-section:hover {
+      transform: translateY(-2px);
+    }
+
+    .pdf-section { border-left: 6px solid #3f51b5; }
+    .url-section { border-left: 6px solid #00897b; }
+    .qa-section { border-left: 6px solid #9c27b0; }
+    .summary-section { border-left: 6px solid #f57c00; }
+
+    .drop-box {
+      position: relative;  
+      border: 2px dashed #3f51b5;
+      padding: 40px;
+      border-radius: 10px;
+      background-color: #e3f2fd;
+      cursor: pointer;
+    }
+
+    .drop-box.hover {
+      background-color: #d1ecf1;
+    }
+
+    .upload-filename {
+      position: absolute;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-weight: 500;
+      color: #3f51b5;
+    }
+
+    pre {
+      background-color: #f1f1f1;
+      padding: 15px;
+      border-radius: 8px;
+      overflow-x: auto;
+      text-align: left;
+    }
+
+    .btn-primary { background-color: #3f51b5; border: none; }
+    .btn-success { background-color: #00897b; border: none; }
+    .btn-purple { background-color: #9c27b0; border: none; }
+    .btn-warning { background-color: #f57c00; border: none; }
+
+    .card {
+      border: 1px solid #e0e0e0;
+      border-radius: 10px;
+    }
+
+    .alert-info { font-weight: 500; }
+  </style>
+</head>
+<body>
+<div class="container py-5">
+  <h1 class="text-center mb-5">🤖 Data Formatting Tool for Chatbots</h1>
+
+  <div class="row g-4">
+    <!-- PDF Section -->
+    <div class="col-md-6 split-section pdf-section">
+      <h3 class="text-center mb-4">📄 PDF → Markdown</h3>
+      <form method="POST" enctype="multipart/form-data" id="pdf-form">
+        <div id="drop-area" class="drop-box mb-4 text-center">
+          <p class="text-muted">Drag & drop a PDF or click to upload</p>
+          <!-- display chosen filename -->
+         <span id="file-name" class="upload-filename"></span>
+          <input type="file" name="pdf" id="fileElem" accept="application/pdf" hidden />
+        </div>
+
+        <div class="mb-3 text-start">
+          <label><strong>Apply Preprocessing?</strong></label><br />
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="pdf_preprocess" value="yes" checked />
+            <label class="form-check-label">Yes (recommended)</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="pdf_preprocess" value="no" />
+            <label class="form-check-label">No (raw only)</label>
+          </div>
+        </div>
+
+        <input type="hidden" name="source" value="pdf" />
+        <button type="submit" class="btn btn-primary w-100">Convert PDF</button>
+      </form>
+    </div>
+
+    <!-- URL Section -->
+    <div class="col-md-6 split-section url-section">
+      <h3 class="text-center mb-4">🌐 URL → Markdown</h3>
+      <form method="POST" id="url-form">
+        <div class="mb-3">
+          <label for="url" class="form-label"><strong>Enter URL</strong></label>
+          <input type="url" class="form-control" name="url" id="url" placeholder="https://example.com" required />
+        </div>
+
+        <div class="mb-4 text-start">
+          <label><strong>Extract internal links?</strong></label><br />
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="crawl_mode" value="yes" checked />
+            <label class="form-check-label">Yes</label>
+          </div>
+          <div class="form-check form-check-inline">
+            <input class="form-check-input" type="radio" name="crawl_mode" value="no" />
+            <label class="form-check-label">No, just this page</label>
+          </div>
+        </div>
+
+        <input type="hidden" name="source" value="url" />
+        <button type="submit" class="btn btn-success w-100">Convert URL</button>
+      </form>
+    </div>
+
+    <!-- Q&A Section -->
+    <div class="col-md-6 split-section qa-section">
+      <h3 class="text-center mb-4">❓ Markdown → Q&A Pairs</h3>
+      <form method="POST" enctype="multipart/form-data" id="qa-form">
+        <div class="mb-3">
+          <label for="markdown_file" class="form-label"><strong>Upload Markdown for Q&A</strong></label>
+          <input type="file" class="form-control" name="markdown_file" id="markdown_file" accept=".md" required>
+        </div>
+      
+        <div class="mb-3">
+          <label for="llm_model_qa" class="form-label"><strong>Select LLM Model</strong></label>
+          <select class="form-select" name="llm_model" id="llm_model_qa" required>
+            <option value="meta-llama/Llama-4-Scout-17B-16E-Instruct" selected>Llama 4 Scout</option>
+            <option value="deepseek-ai/DeepSeek-R1">DeepSeek R1</option>
+            <option value="meta-llama/Llama-3.3-70B-Instruct">Llama 3.3 70B</option>
+            <option value="Qwen/Qwen2-VL-7B-Instruct">Qwen2 VL 7B</option>
+            <option value="openGPT-X/Teuken-7B-instruct-research-v0.4">Teuken 7B</option>
+            <option value="deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct">DeepSeek Coder V2</option>
+          </select>
+        </div>
+      
+        <!-- Important: this tells the backend it's a Q&A request -->
+        <input type="hidden" name="source" value="qa">
+      
+        <button type="submit" class="btn btn-secondary w-100">🧠 Generate Q&A Pairs</button>
+      </form>
+    </div>
+
+    <!-- Summarization Section -->
+    <div class="col-md-6 split-section summary-section">
+      <h3 class="text-center mb-4">📝 Markdown → Summary</h3>
+      <form method="POST" enctype="multipart/form-data" id="summary-form">
+        <div class="mb-3">
+          <label class="form-label"><strong>Select Markdown File</strong></label>
+          <input type="file" class="form-control" name="summary_file" accept=".md" required />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label"><strong>Select LLM</strong></label>
+          <select class="form-select" name="llm_model" required>
+            <option value="meta-llama/Llama-4-Scout-17B-16E-Instruct" selected>LLaMA 4 Scout 17B</option>
+            <option value="meta-llama/Llama-3.3-70B-Instruct">LLaMA 3.3 70B</option>
+            <option value="deepseek-ai/DeepSeek-R1">DeepSeek R1</option>
+            <option value="Qwen/Qwen2-VL-7B-Instruct">Qwen2 VL 7B</option>
+            <option value="openGPT-X/Teuken-7B-instruct-research-v0.4">Teuken 7B</option>
+            <option value="deepseek-ai/DeepSeek-Coder-V2-Lite-Instruct">DeepSeek Coder V2</option>
+            <option value="en-de-translator">EN-DE Translator</option>
+          </select>
+        </div>
+
+        <input type="hidden" name="source" value="summarize" />
+        <button type="submit" class="btn btn-warning w-100">Generate Summary</button>
+      </form>
+    </div>
+  </div>
+
+  {% if converted %}
+  <div class="alert alert-success mt-5 text-center">✅ Conversion complete!</div>
+  
+  
+
+  {% for file in latest_files %}
+    {% set i = loop.index0 %}
+    <div class="card mb-3">
+      <div class="card-body text-start">
+        <h5 class="card-title">
+          📝 {{ file.url if file.url else "Document " ~ (i + 1) }}
+        </h5>
+  
+        {% if file.qa %}
+          <a href="{{ url_for('download_file', version='filtered', index=i) }}"
+             class="btn btn-secondary btn-sm">
+            📘 Download Q&A Pairs
+          </a>
+        {% elif file.summary %}
+          <a href="{{ url_for('download_file', version='filtered', index=i) }}"
+             class="btn btn-warning btn-sm">
+            📚 Download Summary
+          </a>
+        {% elif file.source == 'pdf' %}
+          {% if file.preprocess == 'yes' %}
+            <a href="{{ url_for('download_file', version='filtered', index=i) }}"
+               class="btn btn-primary btn-sm">
+              🧹 Download Preprocessed
+            </a>
+          {% else %}
+            <a href="{{ url_for('download_file', version='raw', index=i) }}"
+               class="btn btn-outline-primary btn-sm">
+              📄 Download Raw
+            </a>
+          {% endif %}
+          {% else %}
+                  <!-- Any other file (i.e. URL→MD) gets both buttons -->
+           <a href="{{ url_for('download_file', version='filtered', index=i) }}"
+             class="btn btn-success btn-sm">
+              🧹 Download Filtered Markdown
+           </a>
+           <a href="{{ url_for('download_file', version='raw', index=i) }}"
+              class="btn btn-outline-success btn-sm ms-2">
+               🌐 Download Raw Markdown
+           </a>
+          {% endif %}
+           
+    </div>
+  </div>
+{% endfor %}
+
+  <h4 class="mt-4">🔍 Markdown Preview</h4>
+  <pre>{{ markdown_content }}</pre>
+  {% endif %}
+</div>
+
+<script>
+  const dropArea = document.getElementById('drop-area');
+  const fileInput = document.getElementById('fileElem');
+  const fileNameDisplay = document.getElementById('file-name');
+
+  function showFileName() {
+    if (fileInput.files.length > 0) {
+      fileNameDisplay.textContent = fileInput.files[0].name;
+    } else {
+      fileNameDisplay.textContent = '';
+    }
+  }
+
+  fileInput.addEventListener('change', showFileName);
+
+  dropArea?.addEventListener('click', () => fileInput.click());
+  dropArea?.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropArea.classList.add('hover');
+  });
+  dropArea?.addEventListener('dragleave', () => {
+    dropArea.classList.remove('hover');
+  });
+  dropArea?.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropArea.classList.remove('hover');
+    fileInput.files = e.dataTransfer.files;
+    showFileName();
+  });
+
+  function attachLoadingMessageToForm(formId) {
+    const form = document.getElementById(formId);
+    if (!form) return;
+
+    form.addEventListener('submit', function (e) {
+      // Prevent default submission temporarily
+      e.preventDefault();
+
+      // Show message
+      const alert = document.createElement('div');
+      alert.className = 'alert alert-info mt-4 text-center';
+      alert.innerText = '⏳ Processing... Please wait. This may take a few moments.';
+      document.querySelector('.container')?.prepend(alert);
+
+      // Let browser paint, then submit form
+      requestAnimationFrame(() => form.submit());
+    });
+  }
+
+  // Attach to all forms
+  attachLoadingMessageToForm('pdf-form');
+  attachLoadingMessageToForm('url-form');
+  attachLoadingMessageToForm('qa-form');
+  attachLoadingMessageToForm('summary-form');
+</script>
