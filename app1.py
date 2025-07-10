@@ -5,12 +5,6 @@ import time
 import logging
 import asyncio
 import atexit
-import ssl
-import certifi
-
-# Force Python's default HTTPS context to use certifi's CA bundle
-ssl._create_default_https_context = ssl.create_default_context(cafile=certifi.where())
-
 
 from apscheduler.schedulers.background import BackgroundScheduler
 
@@ -31,7 +25,8 @@ app.secret_key = 'supersecretkey'
 UPLOAD_FOLDER = Path("static/converted_files")
 UPLOAD_FOLDER.mkdir(parents=True, exist_ok=True)
 
-latest_files = []
+#latest_files = []
+#latest_files = session.get('latest_files', [])
 
 # ─────────────────────────────────────────────────────────────
 # 🔁 Background Cleanup Job – Deletes old files every 10 minutes
@@ -55,9 +50,10 @@ atexit.register(lambda: scheduler.shutdown())
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    global latest_files
+    #global latest_files
     _log.info("📥 Request received at /")
-    latest_files = []
+    #latest_files = []
+    latest_files = session.get('latest_files', [])
 
     if request.method == 'POST':
         pdf = request.files.get('pdf')
@@ -184,8 +180,9 @@ def index():
 
 @app.route('/process_selected', methods=['POST'])
 def process_selected():
-    global latest_files
-    latest_files = []
+    #global latest_files
+    #latest_files = []
+    latest_files = session.get('latest_files', [])
 
     # Grab the URLs directly (no more int conversions!)
     selected_urls = request.form.getlist('selected_urls')
@@ -194,7 +191,7 @@ def process_selected():
 
     # Crawl each one
     results = run_crawl_on_selected_urls(selected_urls, UPLOAD_FOLDER)
-    latest_files = results
+    session['latest_files'] = results
 
     # Build the preview HTML just like you did before
     preview = ""
@@ -207,7 +204,8 @@ def process_selected():
 
 @app.route('/download/<version>/<int:index>')
 def download_file(version, index):
-    global latest_files
+    #global latest_files
+    latest_files = session.get('latest_files', [])
     if 0 <= index < len(latest_files):
         file_path = latest_files[index].get(version)
         if file_path and Path(file_path).exists():
@@ -217,3 +215,4 @@ def download_file(version, index):
 
 if __name__ == '__main__':
     app.run(debug=True, threaded=True)
+
