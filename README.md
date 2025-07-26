@@ -35,9 +35,8 @@ pip install -r requirements.txt
 
 
 **Templates**: This folder contains two HTML templates that define the web-based user interface for our processing pipeline.
-
--***templates/index.html***: This HTML file serves as the main user interface of the application. It allows users to upload files, enter URLs, or interact with other tools in the pipeline. It is the entry point to the system.
--***templates/iselect_url.html***: A dedicated interface for selecting and managing multiple URLs in the URL-to-Markdown conversion pipeline. This template allows users to input a list of URLs, preview extracted content, and selectively choose which content to include in the final dataset.
+- ***templates/index.html***: This HTML file serves as the main user interface of the application. It allows users to upload files, enter URLs, or interact with other tools in the pipeline. It is the entry point to the system.
+- ***templates/iselect_url.html***: A dedicated interface for selecting and managing multiple URLs in the URL-to-Markdown conversion pipeline. This template allows users to input a list of URLs, preview extracted content, and selectively choose which content to include in the final dataset.
     
 
 
