@@ -19,8 +19,10 @@ Finally, including all these in one tool, developing a user-friendly interface w
 ## Installation
 
 **bash**
-git clone https://github.com/VKishorereddy084/Data-Formatting-Tool.git
+git clone https://...
+
 cd Data-Formatting-Tool
+
 pip install -r requirements.txt
 
 #### Files
